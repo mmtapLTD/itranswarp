@@ -36,7 +36,7 @@
 <head>
 	<meta charset="utf-8" />
 	<title>{% block title %} ??? {% endblock %} - {{ __website__.name }}</title>
-	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<!--	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
 	<meta name="viewport" content="width=device-width" />
 	<meta name="keywords" content="{{ __website__.keywords }}" />
 	<meta name="description" content="{{ __website__.description }}" />
@@ -51,6 +51,7 @@
 
 	{% block meta %}<!-- meta here -->{% endblock %}
 
+	<link rel="shortcut icon" href="/static/favicon.ico" />
 	<!-- BEGIN CSS -->
 	<link rel="stylesheet" href="/static/css/codemirror.css" />
 	<link rel="stylesheet" href="/static/css/highlight.css" />
@@ -172,7 +173,10 @@
 					<li><a href="#0" onclick="UIkit.offcanvas.show('#x-offcanvas-left')">{{ _('Index') }}</a></li>
 				</ul>
 				{% endif %}
-				<a id="brand" href="/" class="uk-navbar-brand uk-visible-large">{{ __website__.name }}</a>
+				<a id="brand" href="/" class="uk-navbar-brand uk-visible-large">
+<!--					{{ __website__.name }}-->
+					<img style="height: 45px;" src="/static/img/mmtop-white.png">
+				</a>
 				<a id="brand-small" href="/" class="uk-navbar-brand uk-hidden-large"><i class="uk-icon-home"></i></a>
 				<a class="uk-hidden" href="/blog/{{ __time__ }}">Blog</a>
 				<ul id="ul-navbar" class="uk-navbar-nav uk-hidden-small">
@@ -350,7 +354,7 @@
 					<p>
 						<a href="/" title="version={{ __version__ }}">{{ __website__.name }}</a> {{ __website__.copyright|raw }}
 						<br>
-						Powered by <a href="https://github.com/michaelliao/itranswarp" target="_blank">iTranswarp</a>
+<!--						Powered by <a href="https://dev.mmtap.com" target="_blank">Dev mmtap</a>-->
 					</p>
 				</div>
 				<div class="uk-width-small-1-2 uk-width-medium-1-3 x-hidden-tiny">
@@ -360,9 +364,9 @@
 				</div>
 				<div class="uk-width-medium-1-3 uk-hidden-small">
 					<p>
-						<a href="https://github.com/michaelliao/itranswarp/issues" target="_blank">{{ _('Feedback') }}</a>
+						<a href="http://www.mmtap.com" target="_blank">© 漫漫信息科技有限公司</a>
 						<br>
-						<a href="https://github.com/michaelliao/itranswarp/blob/master/LICENSE" target="_blank">{{ _('License') }}</a>
+						<a href="http://beian.miit.gov.cn/" target="_blank">2014-2020 版权所有 粤ICP备16119131号-2</a>
 					</p>
 				</div>
 			</div>
