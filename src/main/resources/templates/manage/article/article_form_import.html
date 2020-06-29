@@ -1,0 +1,61 @@
+{% extends '../_manage.html' %}
+
+{% block title %} {{ form.name }} {% endblock %}
+
+{% block head %}
+    <script>
+        $(function () {
+            getJSON('/api/categories', function (err, resp) {
+                if (err) {
+                    return showError(err);
+                }
+                var categories = resp.results;
+                var optArr = new Array();
+                $.each(categories,function (i,val) {
+                    optArr.push("<option value='"+val.id+"''>"+val.name+"</option>")
+                })
+                $("#category").empty().append(optArr.join(""));
+                console.info(categories)
+                // var id = parseInt('{{ id }}');
+                // if (id > 0) {
+                //     getJSON('/api/articles/' + id, function (err, article) {
+                //         if (err) {
+                //             return showError(err);
+                //         }
+                //         article.publishAtLocal = timestampToDateTimeLocal(article.publishAt);
+                //         initVM({
+                //             title: 'Edit Article',
+                //             article: article,
+                //             categories: categories
+                //         });
+                //     });
+                // }
+                // else {
+                //     initVM({
+                //         title: 'New Article',
+                //         article: {
+                //             publishAtLocal: timestampToDateTimeLocal(Date.now()),
+                //             categoryId: categories.length > 0 ? categories[0].id : '',
+                //             content: ''
+                //         },
+                //         categories: categories
+                //     });
+                // }
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block main %}
+
+    <div>
+        <form method="post" enctype="multipart/form-data" action="/manage/article/article_import_md">
+            <input type="file" name="md">
+            <select name="categoryId" id="category">
+                <option value="">java</option>
+            </select>
+            <input type="submit" value="上传">
+        </form>
+    </div>
+
+{% endblock %}

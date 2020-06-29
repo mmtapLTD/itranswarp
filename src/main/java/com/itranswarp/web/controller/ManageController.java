@@ -1,32 +1,31 @@
 package com.itranswarp.web.controller;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.itranswarp.Application;
+import com.itranswarp.bean.ArticleBean;
 import com.itranswarp.bean.setting.AbstractSettingBean;
 import com.itranswarp.bean.setting.SettingDefinition;
 import com.itranswarp.common.ApiException;
 import com.itranswarp.enums.ApiError;
 import com.itranswarp.enums.Role;
 import com.itranswarp.markdown.Markdown;
+import com.itranswarp.model.Article;
 import com.itranswarp.model.User;
 import com.itranswarp.redis.RedisService;
 import com.itranswarp.search.AbstractSearcher;
+import com.itranswarp.util.ClassPathUtil;
 import com.itranswarp.web.filter.HttpContext;
 import com.itranswarp.web.view.i18n.Translators;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/manage")
@@ -124,6 +123,44 @@ public class ManageController extends AbstractController {
 	public ModelAndView articleCreate() {
 		return prepareModelAndView("manage/article/article_form.html", Map.of("id", 0, "action", "/api/articles"));
 	}
+
+	/**
+	 * 导入文章
+	 * @param
+	 * @return
+	 */
+	@GetMapping("/article/article_import")
+	public ModelAndView articleImport(){
+		return prepareModelAndView("manage/article/article_form_import.html",Map.of("id",0,"action","/apic/articles"));
+	}
+
+
+	@PostMapping("/article/article_import_md")
+	public ModelAndView articleImportMd(@RequestParam MultipartFile md,Long categoryId){
+		ArticleBean bean = new ArticleBean();
+		bean.name=md.getOriginalFilename();
+		bean.categoryId=categoryId;
+		bean.publishAt=System.currentTimeMillis();
+		bean.tags="java";
+		bean.description=md.getOriginalFilename();
+		try {
+			String text = new String(md.getBytes());
+			bean.content=text;
+			String result = ClassPathUtil.readFile("/static/img/default.txt");
+			bean.image = result;
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		logger.info(System.getProperty("user.dir"));
+
+		Article article = this.articleService.createArticle(HttpContext.getRequiredCurrentUser(), bean);
+		this.articleService.deleteArticlesFromCache(article.categoryId);
+		return prepareModelAndView("manage/article/article_form.html",
+				Map.of("id", article.id, "action", "/api/articles/" + article.id));
+	}
+
+
 
 	@GetMapping("/article/article_update")
 	public ModelAndView articleUpdate(@RequestParam("id") long id) {
